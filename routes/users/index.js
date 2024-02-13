@@ -1,13 +1,18 @@
 const express = require('express');
 const router = express.Router();
 
-module.exports = (userService) => {
+const UserService = require('../../services/UserService');
+// const ContactService = require('../../services/ContactService');
 
-  router.get('/', async (req, res) => {
-    try{
+module.exports = config => {
+  const userService = new UserService(config.postgres.client);
+  // const contactService = new ContactService(config.postgres.client);
+
+  router.get('/all', async (req, res) => {
+    try {
       const user = await userService.getUser();
       res.send(user);
-    }catch(err){
+    } catch (err) {
       return next(err);
     }
   });
