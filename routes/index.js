@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const usersRoute = require('./users');
-// const tweetsRoute = require('./tweets');
+const tweetsRoute = require('./tweets');
 
 module.exports = config => {
   router.get('/', (req, res) => {
@@ -10,7 +10,7 @@ module.exports = config => {
   });
 
   router.use('/user', usersRoute(config));
-  // router.use('/todo', tweetsRoute(config));
+  router.use('/tweet', tweetsRoute(config));
 
   return router;
 };

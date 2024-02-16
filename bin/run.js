@@ -1,5 +1,6 @@
 #!/usr/bin/env node
-
+// import * as dotenv from 'dotenv';
+const dotenv = require('dotenv');
 const http = require('http');
 const Sequelize = require('sequelize');
 
@@ -8,7 +9,10 @@ const config = require('../config')[process.env.NODE_ENV || 'development'];
 const log = config.log();
 const App = require('../app');
 
-const sequelize = new Sequelize(config.postgres.options);
+dotenv.config();
+const { POSTGRES_URL } = process.env;
+// const sequelize = new Sequelize(POSTGRES_URL); // Connect DB using URL
+const sequelize = new Sequelize(config.postgres.options); // Connect with options
 
 function connectToDb() {
   sequelize
@@ -34,9 +38,7 @@ server.listen(process.env.PORT || 3000);
 
 server.on('listening', () => {
   log.info(
-    `Hi there! I'm listening on port ${server.address().port} in ${app.get(
-      'env'
-    )} mode.`
+    `I'm listening on port ${server.address().port} in ${app.get('env')} mode.`
   );
 });
 

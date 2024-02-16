@@ -2,21 +2,20 @@ const express = require('express');
 const router = express.Router();
 
 const UserService = require('../../services/UserService');
-// const ContactService = require('../../services/ContactService');
+const ContactService = require('../../services/ContactService');
 
 module.exports = config => {
   const userService = new UserService(config.postgres.client);
-  // const contactService = new ContactService(config.postgres.client);
+  const contactService = new ContactService(config.postgres.client);
 
   router.post('/create', async (req, res, next) => {
     try {
       const user = await userService.createUser(req.body);
-      // const contactInfo = await contactService.createContactInfo(
-      //   req.body.phone,
-      //   user.id
-      // );
-      // res.send({ user, contactInfo });
-      res.send({ user });
+      const contactInfo = await contactService.createContactInfo(
+        req.body.phone,
+        user.uuid
+      );
+      res.send({ user, contactInfo });
     } catch (err) {
       return next(err);
     }
@@ -76,7 +75,7 @@ module.exports = config => {
     }
   });
 
-  router.get('/delete', async (req, res) => {
+  router.delete('/delete', async (req, res) => {
     try {
       const user = await userService.deleteUser();
       res.send(user);
@@ -85,14 +84,23 @@ module.exports = config => {
     }
   });
 
-  router.post('/deleteContact', async (req, res) => {
+  router.post('/restore', async (req, res) => {
     try {
-      const contact = await contactService.deleteContact();
-      res.send(contact);
+      const user = await userService.restoreUser();
+      res.send(user);
     } catch (err) {
       return next(err);
     }
   });
+
+  // router.post('/deleteContact', async (req, res) => {
+  //   try {
+  //     const contact = await contactService.deleteContact();
+  //     res.send(contact);
+  //   } catch (err) {
+  //     return next(err);
+  //   }
+  // });
 
   router.post('/follow', async (req, res) => {
     try {

@@ -58,16 +58,16 @@ class UserService {
   async getAllUsers() {
     try {
       const users = await this.models.User.findAll({
-        // include: [
-        //   {
-        //     model: this.models.ContactInfo,
-        //     attributes: { exclude: ['updatedAt', 'createdAt', 'UserId'] },
-        //   },
-        //   {
-        //     model: this.models.Tweet,
-        //     attributes: { exclude: ['updatedAt', 'UserId'] },
-        //   },
-        // ],
+        include: [
+          {
+            model: this.models.ContactInfo,
+            attributes: { exclude: ['updatedAt', 'createdAt', 'UserUuid'] },
+          },
+          {
+            model: this.models.Tweet,
+            attributes: { exclude: ['updatedAt', 'UserUuid'] },
+          },
+        ],
         attributes: { exclude: ['updatedAt', 'createdAt'] },
       });
       return users;
@@ -102,9 +102,26 @@ class UserService {
   async deleteUser() {
     try {
       const user = await this.models.User.destroy({
-        where: { firstName: 'Olga' },
+        where: { uuid: '78320b20-cb28-11ee-9118-03db56d28ca0' },
       });
+
+      // const user = await this.models.User.destroy({
+      //   where: { uuid: '78320b20-cb28-11ee-9118-03db56d28ca0' },
+      //   force: true // to hard-deletion to actually delete data
+      // });
       return 'deleted User';
+    } catch (err) {
+      return err;
+    }
+  }
+
+  async restoreUser() {
+    try {
+      const user = await this.models.User.restore({
+        where: { uuid: '78320b20-cb28-11ee-9118-03db56d28ca0' },
+      });
+
+      return 'restored user';
     } catch (err) {
       return err;
     }
